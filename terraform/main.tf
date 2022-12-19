@@ -20,6 +20,15 @@ resource "azurerm_resource_group" "vollgaz_synapse_rg" {
   }
 }
 
+resource "azurerm_purview_account" "vollgaz_purview" {
+  name                = "vollgaz-purview"
+  resource_group_name = azurerm_resource_group.vollgaz_synapse_rg.name
+  location            = azurerm_resource_group.vollgaz_synapse_rg.location
+
+  identity {
+    type = "SystemAssigned"
+  }
+}
 resource "azurerm_storage_account" "vollgaz_synapse_storacc" {
   name                      = "vollgazsynapse"
   resource_group_name       = azurerm_resource_group.vollgaz_synapse_rg.name
