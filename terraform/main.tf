@@ -29,13 +29,11 @@ resource "azurerm_storage_account" "vollgaz_synapse_storacc" {
   account_kind              = "StorageV2"
   is_hns_enabled            = true
   enable_https_traffic_only = true
-
 }
 
 resource "azurerm_storage_data_lake_gen2_filesystem" "vollgaz_synapse_azdl" {
   name               = "vollgaz-synapse-azdl"
   storage_account_id = azurerm_storage_account.vollgaz_synapse_storacc.id
-
 }
 
 resource "azurerm_synapse_workspace" "vollgaz_synapse_workspace" {
@@ -46,8 +44,14 @@ resource "azurerm_synapse_workspace" "vollgaz_synapse_workspace" {
   sql_administrator_login              = "sqladminuser"
   sql_administrator_login_password     = "H@Sh1CoR3!"
   managed_virtual_network_enabled      = true
-
-  public_network_access_enabled = false
+  public_network_access_enabled        = true
+  data_exfiltration_protection_enabled = true
+  github_repo {
+    account_name    = "e-schafer"
+    branch_name     = "master"
+    repository_name = "vigilant-pancake"
+    root_folder     = "/pipelines"
+  }
 
 
   identity {
