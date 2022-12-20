@@ -2,15 +2,20 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "=3.0.0"
+      version = ">=3.0.0"
     }
   }
 }
 
 # Configure the Microsoft Azure Provider
 provider "azurerm" {
-  features {}
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
 }
+
 resource "azurerm_resource_group" "vollgaz_synapse_rg" {
   name     = "vollgaz-synapse-rg"
   location = "West Europe"
@@ -19,6 +24,13 @@ resource "azurerm_resource_group" "vollgaz_synapse_rg" {
     usage   = "demo"
   }
 }
+
+# resource "azurerm_log_analytics_workspace" "vollgaz_log_analytics" {
+#   name                = "vollgaz-purview-workspace"
+#   location            = azurerm_resource_group.vollgaz_synapse_rg.location
+#   resource_group_name = azurerm_resource_group.vollgaz_synapse_rg.name
+#   sku                 = "PerGB2018"
+# }
 
 resource "azurerm_purview_account" "vollgaz_purview" {
   name                = "vollgaz-purview"
@@ -55,6 +67,7 @@ resource "azurerm_synapse_workspace" "vollgaz_synapse_workspace" {
   managed_virtual_network_enabled      = true
   public_network_access_enabled        = true
   data_exfiltration_protection_enabled = true
+  purview_id                           = azurerm_purview_account.vollgaz_purview.id
   github_repo {
     account_name    = "e-schafer"
     branch_name     = "master"
