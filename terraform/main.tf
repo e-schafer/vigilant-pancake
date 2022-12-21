@@ -25,13 +25,6 @@ resource "azurerm_resource_group" "vollgaz_synapse_rg" {
   }
 }
 
-# resource "azurerm_log_analytics_workspace" "vollgaz_log_analytics" {
-#   name                = "vollgaz-purview-workspace"
-#   location            = azurerm_resource_group.vollgaz_synapse_rg.location
-#   resource_group_name = azurerm_resource_group.vollgaz_synapse_rg.name
-#   sku                 = "PerGB2018"
-# }
-
 resource "azurerm_purview_account" "vollgaz_purview" {
   name                = "vollgaz-purview"
   resource_group_name = azurerm_resource_group.vollgaz_synapse_rg.name
@@ -57,6 +50,15 @@ resource "azurerm_storage_data_lake_gen2_filesystem" "vollgaz_synapse_azdl" {
   storage_account_id = azurerm_storage_account.vollgaz_synapse_storacc.id
 }
 
+# Create directories
+resource "azurerm_storage_data_lake_gen2_path" "azdl_path_raw" {
+  filesystem_name      = azurerm_storage_data_lake_gen2_filesystem.vollgaz_synapse_azdl.name
+  resource_group_name  = azurerm_resource_group.vollgaz_synapse_azdl.name
+  storage_account_name = azurerm_storage_account.vollgaz_synapse_azdl.name
+  type                 = "DIRECTORY"
+  path                 = "/raw"
+}
+
 resource "azurerm_synapse_workspace" "vollgaz_synapse_workspace" {
   name                                 = "vollgaz-synapse-workspace"
   resource_group_name                  = azurerm_resource_group.vollgaz_synapse_rg.name
@@ -68,13 +70,6 @@ resource "azurerm_synapse_workspace" "vollgaz_synapse_workspace" {
   public_network_access_enabled        = true
   data_exfiltration_protection_enabled = true
   purview_id                           = azurerm_purview_account.vollgaz_purview.id
-  # github_repo {
-  #   account_name    = "e-schafer"
-  #   branch_name     = "master"
-  #   repository_name = "vigilant-pancake"
-  #   root_folder     = "/pipelines"
-  # }
-
 
   identity {
     type = "SystemAssigned"
