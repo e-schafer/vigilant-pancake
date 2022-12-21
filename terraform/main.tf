@@ -75,3 +75,9 @@ resource "azurerm_synapse_workspace" "vollgaz_synapse_workspace" {
   }
 
 }
+
+resource "azurerm_synapse_firewall_rule" "vollgaz_synapse_firewall" {
+  name                 = "AllowAll"
+  synapse_workspace_id = azurerm_synapse_workspace.vollgaz_synapse_workspace.id
+  start_ip_address     = "0.0.0.0"
+  end_ip_address       = "255.255.255.255"
