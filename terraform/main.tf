@@ -68,12 +68,12 @@ resource "azurerm_synapse_workspace" "vollgaz_synapse_workspace" {
   public_network_access_enabled        = true
   data_exfiltration_protection_enabled = true
   purview_id                           = azurerm_purview_account.vollgaz_purview.id
-  github_repo {
-    account_name    = "e-schafer"
-    branch_name     = "master"
-    repository_name = "vigilant-pancake"
-    root_folder     = "/pipelines"
-  }
+  # github_repo {
+  #   account_name    = "e-schafer"
+  #   branch_name     = "master"
+  #   repository_name = "vigilant-pancake"
+  #   root_folder     = "/pipelines"
+  # }
 
 
   identity {
