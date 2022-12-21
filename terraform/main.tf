@@ -20,7 +20,7 @@ resource "azurerm_resource_group" "vollgaz_synapse_rg" {
   name     = "vollgaz-synapse-rg"
   location = "West Europe"
   tags = {
-    creator = "eric schäfer",
+    creator = "eric schäfer"
     usage   = "demo"
   }
 }
