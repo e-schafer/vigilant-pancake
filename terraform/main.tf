@@ -25,15 +25,15 @@ resource "azurerm_resource_group" "vollgaz_synapse_rg" {
   }
 }
 
-resource "azurerm_purview_account" "vollgaz_purview" {
-  name                = "vollgaz-purview"
-  resource_group_name = azurerm_resource_group.vollgaz_synapse_rg.name
-  location            = azurerm_resource_group.vollgaz_synapse_rg.location
-
-  identity {
-    type = "SystemAssigned"
-  }
-}
+# resource "azurerm_purview_account" "vollgaz_purview" {
+#   count = 
+#   name                = "vollgaz-purview"
+#   resource_group_name = azurerm_resource_group.vollgaz_synapse_rg.name
+#   location            = azurerm_resource_group.vollgaz_synapse_rg.location
+#   identity {
+#     type = "SystemAssigned"
+#   }
+# }
 resource "azurerm_storage_account" "vollgaz_synapse_storacc" {
   name                      = "vollgazsynapse"
   resource_group_name       = azurerm_resource_group.vollgaz_synapse_rg.name
@@ -68,7 +68,7 @@ resource "azurerm_synapse_workspace" "vollgaz_synapse_workspace" {
   managed_virtual_network_enabled      = true
   public_network_access_enabled        = true
   data_exfiltration_protection_enabled = true
-  purview_id                           = azurerm_purview_account.vollgaz_purview.id
+  # purview_id                           = azurerm_purview_account.vollgaz_purview.id
 
   identity {
     type = "SystemAssigned"
