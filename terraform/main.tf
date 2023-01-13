@@ -65,9 +65,9 @@ resource "azurerm_synapse_workspace" "vollgaz_synapse_workspace" {
   storage_data_lake_gen2_filesystem_id = azurerm_storage_data_lake_gen2_filesystem.vollgaz_synapse_azdl.id
   sql_administrator_login              = "sqladminuser"
   sql_administrator_login_password     = "H@Sh1CoR3!"
-  managed_virtual_network_enabled      = true
-  public_network_access_enabled        = true
-  data_exfiltration_protection_enabled = true
+  managed_virtual_network_enabled      = false
+  public_network_access_enabled        = false
+  data_exfiltration_protection_enabled = false
   # purview_id                           = azurerm_purview_account.vollgaz_purview.id
 
   identity {
@@ -81,6 +81,7 @@ resource "azurerm_synapse_firewall_rule" "vollgaz_synapse_firewall" {
   synapse_workspace_id = azurerm_synapse_workspace.vollgaz_synapse_workspace.id
   start_ip_address     = "0.0.0.0"
   end_ip_address       = "255.255.255.255"
+
 }
 
 
