@@ -82,3 +82,25 @@ resource "azurerm_synapse_firewall_rule" "vollgaz_synapse_firewall" {
   start_ip_address     = "0.0.0.0"
   end_ip_address       = "255.255.255.255"
 }
+
+
+resource "azurerm_synapse_spark_pool" "vollgaz_synapse_spark" {
+  name                 = "vollgazspark"
+  synapse_workspace_id = azurerm_synapse_workspace.vollgaz_synapse_workspace.id
+  node_size_family     = "MemoryOptimized"
+  node_size            = "Small"
+  node_count           = 3
+
+
+  auto_pause {
+    delay_in_minutes = 15
+  }
+  # library_requirements_content  = filebase64("spark_requirements.txt")
+  # library_requirements_filename = "spark_requirements.txt"
+  # library_requirements_type     = "PYPI"
+  tags = {
+    creator = "eric schäfer"
+    usage   = "demo"
+  }
+
+}
