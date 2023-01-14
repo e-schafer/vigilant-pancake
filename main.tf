@@ -5,6 +5,13 @@ terraform {
       version = ">=3.0.0"
     }
   }
+  backend "azurerm" {
+    resource_group_name  = "vollgaz-terraform"
+    storage_account_name = "vollgaztfstate"
+    container_name       = "tfstate"
+    key                  = "synapse.terraform.tfstate"
+
+  }
 }
 
 # Configure the Microsoft Azure Provider
@@ -65,9 +72,9 @@ resource "azurerm_synapse_workspace" "vollgaz_synapse_workspace" {
   storage_data_lake_gen2_filesystem_id = azurerm_storage_data_lake_gen2_filesystem.vollgaz_synapse_azdl.id
   sql_administrator_login              = "sqladminuser"
   sql_administrator_login_password     = "H@Sh1CoR3!"
-  managed_virtual_network_enabled      = false
-  public_network_access_enabled        = false
-  data_exfiltration_protection_enabled = false
+  # managed_virtual_network_enabled      = false
+  # public_network_access_enabled        = false
+  # data_exfiltration_protection_enabled = false
   # purview_id                           = azurerm_purview_account.vollgaz_purview.id
 
   identity {
