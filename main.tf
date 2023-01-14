@@ -105,6 +105,7 @@ resource "azurerm_synapse_spark_pool" "vollgaz_synapse_spark" {
   node_size_family     = "MemoryOptimized"
   node_size            = "Small"
   node_count           = 3
+  spark_version        = "3.2"
 
 
   auto_pause {
