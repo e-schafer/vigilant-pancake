@@ -1,0 +1,21 @@
+{
+	"name": "DestinationDataset_yj1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "parking_lux.json",
+				"folderPath": "raw/parking_luxembourg",
+				"fileSystem": "vollgaz-synapse-azdl"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}
