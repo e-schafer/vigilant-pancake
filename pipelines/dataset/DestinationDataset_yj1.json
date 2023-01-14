@@ -10,7 +10,10 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "parking_lux.json",
+				"fileName": {
+					"value": "@concat('data_parking_luxembourg', '_',pipeline().TriggerTime,'.json')",
+					"type": "Expression"
+				},
 				"folderPath": "raw/parking_luxembourg",
 				"fileSystem": "vollgaz-synapse-azdl"
 			}
