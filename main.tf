@@ -63,6 +63,7 @@ resource "azurerm_storage_data_lake_gen2_path" "azdl_path_raw" {
   storage_account_id = azurerm_storage_account.vollgaz_synapse_storacc.id
   resource           = "directory"
   path               = "raw/parking_luxembourg"
+
 }
 
 resource "azurerm_synapse_workspace" "vollgaz_synapse_workspace" {
@@ -76,6 +77,12 @@ resource "azurerm_synapse_workspace" "vollgaz_synapse_workspace" {
   # public_network_access_enabled        = false
   # data_exfiltration_protection_enabled = false
   # purview_id                           = azurerm_purview_account.vollgaz_purview.id
+  github_repo {
+    account_name    = "e-schafer"
+    branch_name     = "master"
+    repository_name = "vigilant-pancake"
+    root_folder     = "/pipelines"
+  }
 
   identity {
     type = "SystemAssigned"
