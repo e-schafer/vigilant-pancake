@@ -11,7 +11,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": {
-					"value": "@concat('data_parking_luxembourg', '_',pipeline().TriggerTime,'.json')",
+					"value": "@concat('data_parking_luxembourg', '_', utcNow(),'.json')",
 					"type": "Expression"
 				},
 				"folderPath": "raw/parking_luxembourg",
