@@ -1,0 +1,24 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"value": "vollgaz-synapse-workspace"
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
+		"vollgaz-synapse-workspace-WorkspaceDefaultSqlServer_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:vollgaz-synapse-workspace.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://vollgazsynapse.dfs.core.windows.net/"
+		},
+		"vdl_parking_luxembourg_properties_typeProperties_url": {
+			"value": "https://www.vdl.lu/fr/parking/data.json"
+		},
+		"vollgaz-synapse-workspace-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"value": "https://vollgazsynapse.dfs.core.windows.net"
+		}
+	}
+}
