@@ -63,7 +63,12 @@ resource "azurerm_storage_data_lake_gen2_path" "azdl_path_raw" {
   storage_account_id = azurerm_storage_account.vollgaz_synapse_storacc.id
   resource           = "directory"
   path               = "raw/parking_luxembourg"
-
+}
+resource "azurerm_storage_data_lake_gen2_path" "azdl_path_raw2" {
+  filesystem_name    = azurerm_storage_data_lake_gen2_filesystem.vollgaz_synapse_azdl.name
+  storage_account_id = azurerm_storage_account.vollgaz_synapse_storacc.id
+  resource           = "directory"
+  path               = "clean/parking_luxembourg"
 }
 
 resource "azurerm_synapse_workspace" "vollgaz_synapse_workspace" {
