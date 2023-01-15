@@ -1,2 +1,0 @@
-az storage fs file delete -f vollgaz-synapse-azdl --account-name vollgazsynapse -p "raw/parking_luxembourg/parking_luxembourg_2022-01-01.json" -y --auth-mode login
-az storage fs file delete -f vollgaz-synapse-azdl --account-name vollgazsynapse -p "raw/parking_luxembourg/parking_luxembourg_2022-01-02.json" -y --auth-mode login
