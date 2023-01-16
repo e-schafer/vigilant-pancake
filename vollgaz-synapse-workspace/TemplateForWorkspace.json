@@ -207,7 +207,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "vollgaz-synapse-workspace-WorkspaceDefaultStorage",
+					"referenceName": "AzureDataLakeStorage1",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -226,7 +226,7 @@
 				"schema": {}
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/vollgaz-synapse-workspace-WorkspaceDefaultStorage')]"
+				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
 			]
 		},
 		{
