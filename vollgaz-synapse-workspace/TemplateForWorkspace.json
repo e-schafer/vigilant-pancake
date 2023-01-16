@@ -11,11 +11,6 @@
 			"type": "secureString",
 			"metadata": "Chaîne sécurisée pour « accountKey » de « AzureDataLakeStorage1 »"
 		},
-		"vollgaz-synapse-workspace-WorkspaceDefaultSqlServer_connectionString": {
-			"type": "secureString",
-			"metadata": "Chaîne sécurisée pour « connectionString » de « vollgaz-synapse-workspace-WorkspaceDefaultSqlServer »",
-			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:vollgaz-synapse-workspace.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
-		},
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://vollgazsynapse.dfs.core.windows.net/"
@@ -23,10 +18,6 @@
 		"vdl_parking_luxembourg_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://www.vdl.lu/fr/parking/data.json"
-		},
-		"vollgaz-synapse-workspace-WorkspaceDefaultStorage_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://vollgazsynapse.dfs.core.windows.net"
 		}
 	},
 	"variables": {
@@ -40,7 +31,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy_yj1",
+						"name": "CopyParkingData",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -383,49 +374,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/vollgaz-synapse-workspace-WorkspaceDefaultSqlServer')]",
-			"type": "Microsoft.Synapse/workspaces/linkedServices",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"parameters": {
-					"DBName": {
-						"type": "String"
-					}
-				},
-				"annotations": [],
-				"type": "AzureSqlDW",
-				"typeProperties": {
-					"connectionString": "[parameters('vollgaz-synapse-workspace-WorkspaceDefaultSqlServer_connectionString')]"
-				},
-				"connectVia": {
-					"referenceName": "AutoResolveIntegrationRuntime",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/vollgaz-synapse-workspace-WorkspaceDefaultStorage')]",
-			"type": "Microsoft.Synapse/workspaces/linkedServices",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('vollgaz-synapse-workspace-WorkspaceDefaultStorage_properties_typeProperties_url')]"
-				},
-				"connectVia": {
-					"referenceName": "AutoResolveIntegrationRuntime",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('workspaceName'), '/AutoResolveIntegrationRuntime')]",
 			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
 			"apiVersion": "2019-06-01-preview",
@@ -478,19 +426,6 @@
 			},
 			"dependsOn": [],
 			"location": "westeurope"
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/PowerBIWorkspace1')]",
-			"type": "Microsoft.Synapse/workspaces/linkedServices",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"annotations": [],
-				"type": "PowerBIWorkspace",
-				"typeProperties": {
-					"tenantID": "48fb2dd9-9e9b-433c-8d92-e20d93ad87e5"
-				}
-			},
-			"dependsOn": []
 		}
 	]
 }
