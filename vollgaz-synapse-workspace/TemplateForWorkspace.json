@@ -59,6 +59,15 @@
 						"typeProperties": {
 							"source": {
 								"type": "JsonSource",
+								"additionalColumns": [
+									{
+										"name": "createdAt",
+										"value": {
+											"value": "@utcnow()",
+											"type": "Expression"
+										}
+									}
+								],
 								"storeSettings": {
 									"type": "HttpReadSettings",
 									"requestMethod": "GET"
@@ -166,6 +175,14 @@
 										},
 										"sink": {
 											"path": "coord_longitude"
+										}
+									},
+									{
+										"source": {
+											"path": "$['createdAt']"
+										},
+										"sink": {
+											"path": "createdAt"
 										}
 									}
 								],
@@ -461,6 +478,19 @@
 			},
 			"dependsOn": [],
 			"location": "westeurope"
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/PowerBIWorkspace1')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "PowerBIWorkspace",
+				"typeProperties": {
+					"tenantID": "48fb2dd9-9e9b-433c-8d92-e20d93ad87e5"
+				}
+			},
+			"dependsOn": []
 		}
 	]
 }
