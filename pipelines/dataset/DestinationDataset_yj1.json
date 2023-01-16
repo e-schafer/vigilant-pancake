@@ -2,7 +2,7 @@
 	"name": "DestinationDataset_yj1",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "AzureDataLakeStorage1",
+			"referenceName": "vollgaz-synapse-workspace-WorkspaceDefaultStorage",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
@@ -10,7 +10,10 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "@concat('data_parking_luxembourg', '_', utcNow(),'.json')",
+				"fileName": {
+					"value": "@concat('data_parking_luxembourg', '_', utcNow(),'.json')",
+					"type": "Expression"
+				},
 				"folderPath": "raw/parking_luxembourg",
 				"fileSystem": "vollgaz-synapse-azdl"
 			}
