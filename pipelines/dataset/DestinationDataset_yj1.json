@@ -2,7 +2,7 @@
 	"name": "DestinationDataset_yj1",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "vollgaz-synapse-workspace-WorkspaceDefaultStorage",
+			"referenceName": "AzureDataLakeStorage1",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
