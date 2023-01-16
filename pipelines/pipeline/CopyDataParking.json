@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy_yj1",
+				"name": "CopyParkingData",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
