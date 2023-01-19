@@ -395,7 +395,6 @@
 						"frequency": "Minute",
 						"interval": 2,
 						"startTime": "2023-01-19T07:33:00Z",
-						"endTime": "2023-01-19T08:33:00Z",
 						"timeZone": "UTC"
 					}
 				}
