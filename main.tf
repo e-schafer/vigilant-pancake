@@ -50,6 +50,16 @@ resource "azurerm_storage_account" "vollgaz_synapse_storacc" {
   account_kind              = "StorageV2"
   is_hns_enabled            = true
   enable_https_traffic_only = true
+  lifecycle {
+    prevent_destroy = false
+  }
+
+  tags = {
+    creator = "eric schäfer"
+    usage   = "demo"
+  }
+
+
 }
 
 resource "azurerm_storage_data_lake_gen2_filesystem" "vollgaz_synapse_azdl" {
