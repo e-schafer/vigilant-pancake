@@ -32,15 +32,6 @@ resource "azurerm_resource_group" "vollgaz_synapse_rg" {
   }
 }
 
-# resource "azurerm_purview_account" "vollgaz_purview" {
-#   count = 
-#   name                = "vollgaz-purview"
-#   resource_group_name = azurerm_resource_group.vollgaz_synapse_rg.name
-#   location            = azurerm_resource_group.vollgaz_synapse_rg.location
-#   identity {
-#     type = "SystemAssigned"
-#   }
-# }
 resource "azurerm_storage_account" "vollgaz_synapse_storacc" {
   name                      = "vollgazsynapse"
   resource_group_name       = azurerm_resource_group.vollgaz_synapse_rg.name
@@ -53,13 +44,10 @@ resource "azurerm_storage_account" "vollgaz_synapse_storacc" {
   lifecycle {
     prevent_destroy = false
   }
-
   tags = {
     creator = "eric schäfer"
     usage   = "demo"
   }
-
-
 }
 
 resource "azurerm_storage_data_lake_gen2_filesystem" "vollgaz_synapse_azdl" {
@@ -82,7 +70,6 @@ resource "azurerm_storage_data_lake_gen2_path" "azdl_path_raw2" {
   lifecycle {
     prevent_destroy = false
   }
-
 }
 
 resource "azurerm_synapse_workspace" "vollgaz_synapse_workspace" {
@@ -92,10 +79,7 @@ resource "azurerm_synapse_workspace" "vollgaz_synapse_workspace" {
   storage_data_lake_gen2_filesystem_id = azurerm_storage_data_lake_gen2_filesystem.vollgaz_synapse_azdl.id
   sql_administrator_login              = "sqladminuser"
   sql_administrator_login_password     = "H@Sh1CoR3!"
-  # managed_virtual_network_enabled      = false
-  # public_network_access_enabled        = false
-  # data_exfiltration_protection_enabled = false
-  # purview_id                           = azurerm_purview_account.vollgaz_purview.id
+
   github_repo {
     account_name    = "e-schafer"
     branch_name     = "master"
@@ -114,7 +98,6 @@ resource "azurerm_synapse_firewall_rule" "vollgaz_synapse_firewall" {
   synapse_workspace_id = azurerm_synapse_workspace.vollgaz_synapse_workspace.id
   start_ip_address     = "0.0.0.0"
   end_ip_address       = "255.255.255.255"
-
 }
 
 
@@ -125,8 +108,6 @@ resource "azurerm_synapse_spark_pool" "vollgaz_synapse_spark" {
   node_size            = "Small"
   node_count           = 3
   spark_version        = "3.2"
-
-
   auto_pause {
     delay_in_minutes = 15
   }
