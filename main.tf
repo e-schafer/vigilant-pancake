@@ -67,9 +67,6 @@ resource "azurerm_storage_data_lake_gen2_path" "azdl_path_raw2" {
   storage_account_id = azurerm_storage_account.vollgaz_synapse_storacc.id
   resource           = "directory"
   path               = "clean/parking_luxembourg"
-  lifecycle {
-    prevent_destroy = false
-  }
 }
 
 resource "azurerm_synapse_workspace" "vollgaz_synapse_workspace" {
