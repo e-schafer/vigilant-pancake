@@ -10,7 +10,6 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "parkings",
 				"folderPath": "clean/parking_luxembourg",
 				"fileSystem": "vollgaz-synapse-azdl"
 			},
