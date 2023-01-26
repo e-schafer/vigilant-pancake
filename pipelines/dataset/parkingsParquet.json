@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "clean/parking_luxembourg",
+				"folderPath": "clean/parking_luxembourg/parkings",
 				"fileSystem": "vollgaz-synapse-azdl"
 			},
 			"compressionCodec": "snappy"
