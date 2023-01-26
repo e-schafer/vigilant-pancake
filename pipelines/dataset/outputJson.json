@@ -14,7 +14,7 @@
 					"value": "@concat('parking_data_', utcNow(), '.json')",
 					"type": "Expression"
 				},
-				"folderPath": "raw",
+				"folderPath": "raw/parking_luxembourg",
 				"fileSystem": "vollgaz-synapse-azdl"
 			}
 		},
