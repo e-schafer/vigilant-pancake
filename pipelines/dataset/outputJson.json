@@ -1,0 +1,20 @@
+{
+	"name": "outputJson",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "@concat('parking_data_', utcNow(), '.json')'",
+				"folderPath": "raw",
+				"fileSystem": "vollgaz-synapse-azdl"
+			}
+		},
+		"schema": {}
+	}
+}
