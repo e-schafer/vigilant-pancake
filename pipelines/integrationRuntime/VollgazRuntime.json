@@ -1,0 +1,17 @@
+{
+	"name": "VollgazRuntime",
+	"properties": {
+		"type": "Managed",
+		"typeProperties": {
+			"computeProperties": {
+				"location": "West Europe",
+				"dataFlowProperties": {
+					"computeType": "General",
+					"coreCount": 16,
+					"timeToLive": 15,
+					"cleanup": false
+				}
+			}
+		}
+	}
+}
