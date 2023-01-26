@@ -1,0 +1,22 @@
+{
+	"name": "luxembourg_parkings",
+	"properties": {
+		"Name": "luxembourg_parkings",
+		"EntityType": "DATABASE",
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"Properties": {
+			"IsSyMSCDMDatabase": true
+		},
+		"Source": {
+			"Provider": "ADLS",
+			"Location": "abfss://vollgaz-synapse-azdl@vollgazsynapse.dfs.core.windows.net/clean",
+			"Properties": {
+				"FormatType": "parquet",
+				"LinkedServiceName": "AzureDataLakeStorage1"
+			}
+		}
+	},
+	"type": "DATABASE"
+}
