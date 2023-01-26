@@ -117,3 +117,11 @@ resource "azurerm_synapse_spark_pool" "vollgaz_synapse_spark" {
   }
 
 }
+
+resource "azurerm_synapse_integration_runtime_azure" "vollgaz_runtime" {
+  name                 = "VollgazRuntime"
+  synapse_workspace_id = azurerm_synapse_workspace.vollgaz_synapse_workspace.id
+  location             = "AutoResolve"
+  core_count           = 8
+  time_to_live         = 15
+}
