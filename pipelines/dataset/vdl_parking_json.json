@@ -1,0 +1,87 @@
+{
+	"name": "vdl_parking_json",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "vdl_parking_luxembourg",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"parking": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"title": {
+								"type": "string"
+							},
+							"total": {
+								"type": "integer"
+							},
+							"actuel": {
+								"type": "integer"
+							},
+							"tendance": {
+								"type": "integer"
+							},
+							"ouvert": {
+								"type": "integer"
+							},
+							"complet": {
+								"type": "integer"
+							},
+							"coords": {
+								"type": "object",
+								"properties": {
+									"latitude": {
+										"type": "number"
+									},
+									"longitude": {
+										"type": "number"
+									}
+								}
+							}
+						}
+					}
+				},
+				"neighborhood": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"total": {
+								"type": "integer"
+							},
+							"tendance": {
+								"type": "integer"
+							},
+							"actuel": {
+								"type": "integer"
+							},
+							"tendance_average": {
+								"type": "number"
+							},
+							"slug": {
+								"type": "string"
+							},
+							"title": {
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
