@@ -23,7 +23,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "Dataflow1",
+						"referenceName": "cleanParkingData",
 						"type": "DataFlowReference"
 					},
 					"compute": {
