@@ -1,0 +1,21 @@
+{
+	"name": "neighborhoodParquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "neighborhoods.parquet",
+				"folderPath": "clean/parking_luxembourg",
+				"fileSystem": "vollgaz-synapse-azdl"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
