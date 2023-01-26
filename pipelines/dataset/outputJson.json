@@ -10,7 +10,10 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "@concat('parking_data_', utcNow(), '.json')'",
+				"fileName": {
+					"value": "@concat('parking_data_', utcNow(), '.json')",
+					"type": "Expression"
+				},
 				"folderPath": "raw",
 				"fileSystem": "vollgaz-synapse-azdl"
 			}
