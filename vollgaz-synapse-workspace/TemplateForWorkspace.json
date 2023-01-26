@@ -11,6 +11,11 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
 		},
+		"vollgaz-synapse-workspace-WorkspaceDefaultSqlServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'vollgaz-synapse-workspace-WorkspaceDefaultSqlServer'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:vollgaz-synapse-workspace.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://vollgazsynapse.dfs.core.windows.net/"
@@ -18,6 +23,10 @@
 		"vdl_parking_luxembourg_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://www.vdl.lu/fr/parking/data.json"
+		},
+		"vollgaz-synapse-workspace-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://vollgazsynapse.dfs.core.windows.net"
 		}
 	},
 	"variables": {
@@ -58,8 +67,7 @@
 									"source1": {},
 									"parkingsParquetSink": {},
 									"neighborhoodParquetSink": {}
-								},
-								"linkedServiceParameters": {}
+								}
 							},
 							"staging": {},
 							"compute": {
@@ -87,7 +95,10 @@
 								"additionalColumns": [
 									{
 										"name": "createdAt",
-										"value": "@utcnow()"
+										"value": {
+											"value": "@utcnow()",
+											"type": "Expression"
+										}
 									}
 								],
 								"storeSettings": {
@@ -130,13 +141,64 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
-				"annotations": []
+				"annotations": [],
+				"lastPublishTime": "2023-01-26T10:54:29Z"
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/dataflows/Dataflow1')]",
 				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]",
 				"[concat(variables('workspaceId'), '/datasets/vdl_parking_json')]",
 				"[concat(variables('workspaceId'), '/datasets/rawParkingData')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/neighborhoodParquet')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "clean/parking_luxembourg/neighborhoods",
+						"fileSystem": "vollgaz-synapse-azdl"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/parkingsParquet')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "clean/parking_luxembourg/parkings",
+						"fileSystem": "vollgaz-synapse-azdl"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
 			]
 		},
 		{
@@ -301,6 +363,79 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/vollgaz-synapse-workspace-WorkspaceDefaultSqlServer')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"parameters": {
+					"DBName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('vollgaz-synapse-workspace-WorkspaceDefaultSqlServer_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/vollgaz-synapse-workspace-WorkspaceDefaultStorage')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('vollgaz-synapse-workspace-WorkspaceDefaultStorage_properties_typeProperties_url')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/triggerParkingDataCOpy')]",
+			"type": "Microsoft.Synapse/workspaces/triggers",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "extractParkingData",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 2,
+						"startTime": "2023-01-26T12:43:00Z",
+						"timeZone": "UTC"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/pipelines/extractParkingData')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/AutoResolveIntegrationRuntime')]",
 			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
 			"apiVersion": "2019-06-01-preview",
@@ -318,41 +453,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/WorkspaceSystemIdentity')]",
-			"type": "Microsoft.Synapse/workspaces/credentials",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"type": "ManagedIdentity",
-				"typeProperties": {}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/vollgazspark')]",
-			"type": "Microsoft.Synapse/workspaces/bigDataPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"autoPause": {
-					"enabled": true,
-					"delayInMinutes": 15
-				},
-				"autoScale": {
-					"enabled": false,
-					"maxNodeCount": 0,
-					"minNodeCount": 0
-				},
-				"nodeCount": 3,
-				"nodeSize": "Small",
-				"nodeSizeFamily": "MemoryOptimized",
-				"sparkVersion": "3.2",
-				"isComputeIsolationEnabled": false,
-				"sessionLevelPackagesEnabled": false,
-				"annotations": []
-			},
-			"dependsOn": [],
-			"location": "westeurope"
 		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/Dataflow1')]",
@@ -434,7 +534,6 @@
 						"flattenParkings sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'parquet',",
-						"     partitionFileNames:['parkings.parquet'],",
 						"     umask: 0022,",
 						"     preCommands: [],",
 						"     postCommands: [],",
@@ -456,13 +555,11 @@
 						"flattenNeighborhoods sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'parquet',",
-						"     partitionFileNames:['neighborhoods.parquet'],",
 						"     umask: 0022,",
 						"     preCommands: [],",
 						"     postCommands: [],",
 						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> neighborhoodParquetSink"
+						"     skipDuplicateMapOutputs: true) ~> neighborhoodParquetSink"
 					]
 				}
 			},
@@ -473,55 +570,34 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/parkingsParquet')]",
-			"type": "Microsoft.Synapse/workspaces/datasets",
+			"name": "[concat(parameters('workspaceName'), '/WorkspaceSystemIdentity')]",
+			"type": "Microsoft.Synapse/workspaces/credentials",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureDataLakeStorage1",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "clean/parking_luxembourg",
-						"fileSystem": "vollgaz-synapse-azdl"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": []
+				"type": "ManagedIdentity",
+				"typeProperties": {}
 			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
-			]
+			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/neighborhoodParquet')]",
-			"type": "Microsoft.Synapse/workspaces/datasets",
+			"name": "[concat(parameters('workspaceName'), '/SQL script 1')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureDataLakeStorage1",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "neighborhoods",
-						"folderPath": "clean/parking_luxembourg",
-						"fileSystem": "vollgaz-synapse-azdl"
+				"content": {
+					"query": "SELECT distinct createdAt\n FROM [luxembourg_parkings].[dbo].[parkings]",
+					"metadata": {
+						"language": "sql"
 					},
-					"compressionCodec": "snappy"
+					"currentConnection": {
+						"databaseName": "luxembourg_parkings",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
 				},
-				"schema": []
+				"type": "SqlQuery"
 			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/luxembourg_parkings')]",
@@ -548,186 +624,10 @@
 									"FormatType": "parquet",
 									"LinkedServiceName": "AzureDataLakeStorage1"
 								}
-							}
-						},
-						"Source": {
-							"Type": "SPARK"
-						}
-					},
-					{
-						"ActionType": "CREATE",
-						"OldEntity": null,
-						"NewEntity": {
-							"Name": "parkings",
-							"EntityType": "TABLE",
-							"Namespace": {
-								"DatabaseName": "luxembourg_parkings"
 							},
-							"Description": "",
-							"TableType": "EXTERNAL",
-							"Origin": {
-								"Type": "SPARK"
-							},
-							"StorageDescriptor": {
-								"Columns": [
-									{
-										"Name": "id",
-										"OriginDataTypeName": {
-											"TypeName": "short",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Properties": {
-												"HIVE_TYPE_STRING": "short"
-											}
-										},
-										"DeltaFormatInvalidMessages": []
-									},
-									{
-										"Name": "title",
-										"OriginDataTypeName": {
-											"TypeName": "string",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Length": 8000,
-											"Properties": {
-												"HIVE_TYPE_STRING": "string"
-											}
-										},
-										"DeltaFormatInvalidMessages": []
-									},
-									{
-										"Name": "total",
-										"OriginDataTypeName": {
-											"TypeName": "short",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Properties": {
-												"HIVE_TYPE_STRING": "short"
-											}
-										},
-										"DeltaFormatInvalidMessages": []
-									},
-									{
-										"Name": "actuel",
-										"OriginDataTypeName": {
-											"TypeName": "short",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Properties": {
-												"HIVE_TYPE_STRING": "short"
-											}
-										},
-										"DeltaFormatInvalidMessages": []
-									},
-									{
-										"Name": "tendance",
-										"OriginDataTypeName": {
-											"TypeName": "boolean",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Properties": {
-												"HIVE_TYPE_STRING": "boolean"
-											}
-										},
-										"DeltaFormatInvalidMessages": []
-									},
-									{
-										"Name": "ouvert",
-										"OriginDataTypeName": {
-											"TypeName": "boolean",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Properties": {
-												"HIVE_TYPE_STRING": "boolean"
-											}
-										},
-										"DeltaFormatInvalidMessages": []
-									},
-									{
-										"Name": "complet",
-										"OriginDataTypeName": {
-											"TypeName": "boolean",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Properties": {
-												"HIVE_TYPE_STRING": "boolean"
-											}
-										},
-										"DeltaFormatInvalidMessages": []
-									},
-									{
-										"Name": "coords_latitude",
-										"OriginDataTypeName": {
-											"TypeName": "double",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Properties": {
-												"HIVE_TYPE_STRING": "double"
-											}
-										},
-										"DeltaFormatInvalidMessages": []
-									},
-									{
-										"Name": "coords_longitude",
-										"OriginDataTypeName": {
-											"TypeName": "double",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Properties": {
-												"HIVE_TYPE_STRING": "double"
-											}
-										},
-										"DeltaFormatInvalidMessages": []
-									},
-									{
-										"Name": "createdAt",
-										"OriginDataTypeName": {
-											"TypeName": "string",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Length": 8000,
-											"Properties": {
-												"HIVE_TYPE_STRING": "string"
-											}
-										},
-										"DeltaFormatInvalidMessages": []
-									}
-								],
-								"Format": {
-									"InputFormat": "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat",
-									"OutputFormat": "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat",
-									"FormatType": "parquet",
-									"SerializeLib": "org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe",
-									"Properties": {
-										"path": "abfss://vollgaz-synapse-azdl@vollgazsynapse.dfs.core.windows.net//clean/parking_luxembourg/parkings.parquet",
-										"FormatTypeSetToDatabaseDefault": false
-									}
-								},
-								"Source": {
-									"Provider": "ADLS",
-									"Location": "abfss://vollgaz-synapse-azdl@vollgazsynapse.dfs.core.windows.net//clean/parking_luxembourg/parkings.parquet",
-									"Properties": {
-										"LinkedServiceName": "AzureDataLakeStorage1",
-										"LocationSetToDatabaseDefault": false
-									}
-								},
-								"Properties": {
-									"textinputformat.record.delimiter": ",",
-									"compression": "",
-									"derivedModelAttributeInfo": "{\"attributeReferences\":{}}"
-								},
-								"Compressed": false,
-								"IsStoredAsSubdirectories": false
-							},
-							"Properties": {
-								"Description": "",
-								"DisplayFolderInfo": "{\"name\":\"Others\",\"colorCode\":\"\"}",
-								"PrimaryKeys": "",
-								"spark.sql.sources.provider": "parquet"
-							},
-							"Retention": 0,
-							"Temporary": false,
-							"IsRewriteEnabled": false
+							"PublishStatus": "PUBLISHED",
+							"ObjectVersion": 6,
+							"ObjectId": "a7830d96-311c-41f8-a69f-981699bf2db8"
 						},
 						"Source": {
 							"Type": "SPARK"
@@ -739,117 +639,135 @@
 						"NewEntity": {
 							"Name": "neighborhoods",
 							"EntityType": "TABLE",
-							"Namespace": {
-								"DatabaseName": "luxembourg_parkings"
-							},
-							"Description": "",
 							"TableType": "EXTERNAL",
-							"Origin": {
-								"Type": "SPARK"
+							"Namespace": {
+								"SchemaName": null,
+								"DatabaseName": "luxembourg_parkings",
+								"DatabaseId": null
 							},
 							"StorageDescriptor": {
+								"Distribution": null,
 								"Columns": [
 									{
 										"Name": "actuel",
+										"Description": null,
 										"OriginDataTypeName": {
 											"TypeName": "short",
 											"IsComplexType": false,
 											"IsNullable": true,
+											"Length": 0,
+											"Precision": 0,
+											"Scale": 0,
 											"Properties": {
 												"HIVE_TYPE_STRING": "short"
 											}
-										},
-										"DeltaFormatInvalidMessages": []
+										}
 									},
 									{
 										"Name": "slug",
+										"Description": null,
 										"OriginDataTypeName": {
 											"TypeName": "string",
 											"IsComplexType": false,
 											"IsNullable": true,
 											"Length": 8000,
+											"Precision": 0,
+											"Scale": 0,
 											"Properties": {
 												"HIVE_TYPE_STRING": "string"
 											}
-										},
-										"DeltaFormatInvalidMessages": []
+										}
 									},
 									{
 										"Name": "tendance",
+										"Description": null,
 										"OriginDataTypeName": {
 											"TypeName": "boolean",
 											"IsComplexType": false,
 											"IsNullable": true,
+											"Length": 0,
+											"Precision": 0,
+											"Scale": 0,
 											"Properties": {
 												"HIVE_TYPE_STRING": "boolean"
 											}
-										},
-										"DeltaFormatInvalidMessages": []
+										}
 									},
 									{
 										"Name": "tendance_average",
+										"Description": null,
 										"OriginDataTypeName": {
 											"TypeName": "double",
 											"IsComplexType": false,
 											"IsNullable": true,
+											"Length": 0,
+											"Precision": 0,
+											"Scale": 0,
 											"Properties": {
 												"HIVE_TYPE_STRING": "double"
 											}
-										},
-										"DeltaFormatInvalidMessages": []
+										}
 									},
 									{
 										"Name": "title",
+										"Description": null,
 										"OriginDataTypeName": {
 											"TypeName": "string",
 											"IsComplexType": false,
 											"IsNullable": true,
 											"Length": 8000,
+											"Precision": 0,
+											"Scale": 0,
 											"Properties": {
 												"HIVE_TYPE_STRING": "string"
 											}
-										},
-										"DeltaFormatInvalidMessages": []
+										}
 									},
 									{
 										"Name": "total",
+										"Description": null,
 										"OriginDataTypeName": {
 											"TypeName": "short",
 											"IsComplexType": false,
 											"IsNullable": true,
+											"Length": 0,
+											"Precision": 0,
+											"Scale": 0,
 											"Properties": {
 												"HIVE_TYPE_STRING": "short"
 											}
-										},
-										"DeltaFormatInvalidMessages": []
+										}
 									},
 									{
 										"Name": "createdAt",
+										"Description": null,
 										"OriginDataTypeName": {
 											"TypeName": "string",
 											"IsComplexType": false,
 											"IsNullable": true,
 											"Length": 8000,
+											"Precision": 0,
+											"Scale": 0,
 											"Properties": {
 												"HIVE_TYPE_STRING": "string"
 											}
-										},
-										"DeltaFormatInvalidMessages": []
+										}
 									}
 								],
+								"ColumnSetEntityName": "189d0ffc-25bd-456f-99c6-1e6fb1e33827",
 								"Format": {
 									"InputFormat": "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat",
 									"OutputFormat": "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat",
 									"FormatType": "parquet",
 									"SerializeLib": "org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe",
 									"Properties": {
-										"path": "abfss://vollgaz-synapse-azdl@vollgazsynapse.dfs.core.windows.net//clean/parking_luxembourg/neighborhoods.parquet",
+										"path": "abfss://vollgaz-synapse-azdl@vollgazsynapse.dfs.core.windows.net/clean/parking_luxembourg/neighborhoods",
 										"FormatTypeSetToDatabaseDefault": false
 									}
 								},
 								"Source": {
 									"Provider": "ADLS",
-									"Location": "abfss://vollgaz-synapse-azdl@vollgazsynapse.dfs.core.windows.net//clean/parking_luxembourg/neighborhoods.parquet",
+									"Location": "abfss://vollgaz-synapse-azdl@vollgazsynapse.dfs.core.windows.net/clean/parking_luxembourg/neighborhoods",
 									"Properties": {
 										"LinkedServiceName": "AzureDataLakeStorage1",
 										"LocationSetToDatabaseDefault": false
@@ -857,21 +775,262 @@
 								},
 								"Properties": {
 									"textinputformat.record.delimiter": ",",
-									"compression": "",
+									"compression": "{\"type\":\"None\",\"level\":\"optimal\"}",
 									"derivedModelAttributeInfo": "{\"attributeReferences\":{}}"
 								},
 								"Compressed": false,
+								"SerDeInfo": null,
 								"IsStoredAsSubdirectories": false
 							},
+							"Owner": null,
+							"CreateTime": 0,
+							"LastAccessTime": 0,
+							"Retention": 0,
+							"Temporary": false,
+							"IsRewriteEnabled": false,
+							"ViewOriginalText": null,
+							"ViewExpandedText": null,
+							"Origin": {
+								"Type": "SPARK"
+							},
+							"OriginObjectId": null,
+							"IsSharedEntity": false,
+							"PublishStatus": "PUBLISHED",
 							"Properties": {
 								"Description": "",
 								"DisplayFolderInfo": "{\"name\":\"Others\",\"colorCode\":\"\"}",
 								"PrimaryKeys": "",
-								"spark.sql.sources.provider": "parquet"
+								"spark.sql.sources.provider": "parquet",
+								"spark.sql.sources.schema.numParts": "1",
+								"spark.sql.sources.schema.part.0": "{\"type\":\"struct\",\"fields\":[{\"name\":\"actuel\",\"type\":\"short\",\"nullable\":true,\"metadata\":{}},{\"name\":\"slug\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"tendance\",\"type\":\"boolean\",\"nullable\":true,\"metadata\":{}},{\"name\":\"tendance_average\",\"type\":\"double\",\"nullable\":true,\"metadata\":{}},{\"name\":\"title\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"total\",\"type\":\"short\",\"nullable\":true,\"metadata\":{}},{\"name\":\"createdAt\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}}]}"
 							},
+							"ObjectVersion": 6,
+							"ObjectId": "037e7b56-9b2e-4319-b253-a8bf7cf03432",
+							"Description": ""
+						},
+						"Source": {
+							"Type": "SPARK"
+						}
+					},
+					{
+						"ActionType": "CREATE",
+						"OldEntity": null,
+						"NewEntity": {
+							"Name": "parkings",
+							"EntityType": "TABLE",
+							"TableType": "EXTERNAL",
+							"Namespace": {
+								"SchemaName": null,
+								"DatabaseName": "luxembourg_parkings",
+								"DatabaseId": null
+							},
+							"StorageDescriptor": {
+								"Distribution": null,
+								"Columns": [
+									{
+										"Name": "id",
+										"Description": null,
+										"OriginDataTypeName": {
+											"TypeName": "short",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 0,
+											"Precision": 0,
+											"Scale": 0,
+											"Properties": {
+												"HIVE_TYPE_STRING": "short"
+											}
+										}
+									},
+									{
+										"Name": "title",
+										"Description": null,
+										"OriginDataTypeName": {
+											"TypeName": "string",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 8000,
+											"Precision": 0,
+											"Scale": 0,
+											"Properties": {
+												"HIVE_TYPE_STRING": "string"
+											}
+										}
+									},
+									{
+										"Name": "total",
+										"Description": null,
+										"OriginDataTypeName": {
+											"TypeName": "short",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 0,
+											"Precision": 0,
+											"Scale": 0,
+											"Properties": {
+												"HIVE_TYPE_STRING": "short"
+											}
+										}
+									},
+									{
+										"Name": "actuel",
+										"Description": null,
+										"OriginDataTypeName": {
+											"TypeName": "short",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 0,
+											"Precision": 0,
+											"Scale": 0,
+											"Properties": {
+												"HIVE_TYPE_STRING": "short"
+											}
+										}
+									},
+									{
+										"Name": "tendance",
+										"Description": null,
+										"OriginDataTypeName": {
+											"TypeName": "boolean",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 0,
+											"Precision": 0,
+											"Scale": 0,
+											"Properties": {
+												"HIVE_TYPE_STRING": "boolean"
+											}
+										}
+									},
+									{
+										"Name": "ouvert",
+										"Description": null,
+										"OriginDataTypeName": {
+											"TypeName": "boolean",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 0,
+											"Precision": 0,
+											"Scale": 0,
+											"Properties": {
+												"HIVE_TYPE_STRING": "boolean"
+											}
+										}
+									},
+									{
+										"Name": "complet",
+										"Description": null,
+										"OriginDataTypeName": {
+											"TypeName": "boolean",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 0,
+											"Precision": 0,
+											"Scale": 0,
+											"Properties": {
+												"HIVE_TYPE_STRING": "boolean"
+											}
+										}
+									},
+									{
+										"Name": "coords_latitude",
+										"Description": null,
+										"OriginDataTypeName": {
+											"TypeName": "double",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 0,
+											"Precision": 0,
+											"Scale": 0,
+											"Properties": {
+												"HIVE_TYPE_STRING": "double"
+											}
+										}
+									},
+									{
+										"Name": "coords_longitude",
+										"Description": null,
+										"OriginDataTypeName": {
+											"TypeName": "double",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 0,
+											"Precision": 0,
+											"Scale": 0,
+											"Properties": {
+												"HIVE_TYPE_STRING": "double"
+											}
+										}
+									},
+									{
+										"Name": "createdAt",
+										"Description": null,
+										"OriginDataTypeName": {
+											"TypeName": "string",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 8000,
+											"Precision": 0,
+											"Scale": 0,
+											"Properties": {
+												"HIVE_TYPE_STRING": "string"
+											}
+										}
+									}
+								],
+								"ColumnSetEntityName": "f11e73dd-f576-452f-b508-97340070024b",
+								"Format": {
+									"InputFormat": "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat",
+									"OutputFormat": "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat",
+									"FormatType": "parquet",
+									"SerializeLib": "org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe",
+									"Properties": {
+										"path": "abfss://vollgaz-synapse-azdl@vollgazsynapse.dfs.core.windows.net/clean/parking_luxembourg/parkings",
+										"FormatTypeSetToDatabaseDefault": false
+									}
+								},
+								"Source": {
+									"Provider": "ADLS",
+									"Location": "abfss://vollgaz-synapse-azdl@vollgazsynapse.dfs.core.windows.net/clean/parking_luxembourg/parkings",
+									"Properties": {
+										"LinkedServiceName": "AzureDataLakeStorage1",
+										"LocationSetToDatabaseDefault": false
+									}
+								},
+								"Properties": {
+									"textinputformat.record.delimiter": ",",
+									"compression": "{\"type\":\"None\",\"level\":\"optimal\"}",
+									"derivedModelAttributeInfo": "{\"attributeReferences\":{}}"
+								},
+								"Compressed": false,
+								"SerDeInfo": null,
+								"IsStoredAsSubdirectories": false
+							},
+							"Owner": null,
+							"CreateTime": 0,
+							"LastAccessTime": 0,
 							"Retention": 0,
 							"Temporary": false,
-							"IsRewriteEnabled": false
+							"IsRewriteEnabled": false,
+							"ViewOriginalText": null,
+							"ViewExpandedText": null,
+							"Origin": {
+								"Type": "SPARK"
+							},
+							"OriginObjectId": null,
+							"IsSharedEntity": false,
+							"PublishStatus": "PUBLISHED",
+							"Properties": {
+								"Description": "",
+								"DisplayFolderInfo": "{\"name\":\"Others\",\"colorCode\":\"\"}",
+								"PrimaryKeys": "",
+								"spark.sql.sources.provider": "parquet",
+								"spark.sql.sources.schema.numParts": "1",
+								"spark.sql.sources.schema.part.0": "{\"type\":\"struct\",\"fields\":[{\"name\":\"id\",\"type\":\"short\",\"nullable\":true,\"metadata\":{}},{\"name\":\"title\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"total\",\"type\":\"short\",\"nullable\":true,\"metadata\":{}},{\"name\":\"actuel\",\"type\":\"short\",\"nullable\":true,\"metadata\":{}},{\"name\":\"tendance\",\"type\":\"boolean\",\"nullable\":true,\"metadata\":{}},{\"name\":\"ouvert\",\"type\":\"boolean\",\"nullable\":true,\"metadata\":{}},{\"name\":\"complet\",\"type\":\"boolean\",\"nullable\":true,\"metadata\":{}},{\"name\":\"coords_latitude\",\"type\":\"double\",\"nullable\":true,\"metadata\":{}},{\"name\":\"coords_longitude\",\"type\":\"double\",\"nullable\":true,\"metadata\":{}},{\"name\":\"createdAt\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}}]}"
+							},
+							"ObjectVersion": 6,
+							"ObjectId": "761ab74b-82c4-491a-b2be-dc7daea5673b",
+							"Description": ""
 						},
 						"Source": {
 							"Type": "SPARK"
@@ -880,6 +1039,31 @@
 				]
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/vollgazspark')]",
+			"type": "Microsoft.Synapse/workspaces/bigDataPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"autoPause": {
+					"enabled": true,
+					"delayInMinutes": 15
+				},
+				"autoScale": {
+					"enabled": false,
+					"maxNodeCount": 0,
+					"minNodeCount": 0
+				},
+				"nodeCount": 3,
+				"nodeSize": "Small",
+				"nodeSizeFamily": "MemoryOptimized",
+				"sparkVersion": "3.2",
+				"isComputeIsolationEnabled": false,
+				"sessionLevelPackagesEnabled": false,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "westeurope"
 		}
 	]
 }
