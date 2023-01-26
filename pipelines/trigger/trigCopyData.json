@@ -1,0 +1,24 @@
+{
+	"name": "trigCopyData",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "extractParkingData",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 10,
+				"startTime": "2023-01-26T13:20:00Z",
+				"timeZone": "UTC"
+			}
+		}
+	}
+}
