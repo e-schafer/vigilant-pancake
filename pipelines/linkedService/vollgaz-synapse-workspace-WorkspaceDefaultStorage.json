@@ -1,15 +1,15 @@
 {
-	"name": "vollgaz-synapse-workspace-WorkspaceDefaultStorage",
-	"type": "Microsoft.Synapse/workspaces/linkedservices",
-	"properties": {
-		"typeProperties": {
-			"url": "https://vollgazsynapse.dfs.core.windows.net"
-		},
-		"type": "AzureBlobFS",
-		"connectVia": {
-			"referenceName": "AutoResolveIntegrationRuntime",
-			"type": "IntegrationRuntimeReference"
-		},
-		"annotations": []
-	}
+  "name": "vollgaz-synapse-workspace-WorkspaceDefaultStorage",
+  "type": "Microsoft.Synapse/workspaces/linkedservices",
+  "properties": {
+    "typeProperties": {
+      "url": "https://vollgazsynapse.dfs.core.windows.net"
+    },
+    "type": "AzureBlobFS",
+    "connectVia": {
+      "referenceName": "VollgazRuntime",
+      "type": "IntegrationRuntimeReference"
+    },
+    "annotations": []
+  }
 }
