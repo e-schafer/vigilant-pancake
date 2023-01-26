@@ -76,7 +76,6 @@
 				"flattenParkings sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
-				"     partitionFileNames:['parkings.parquet'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
@@ -98,13 +97,11 @@
 				"flattenNeighborhoods sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
-				"     partitionFileNames:['neighborhoods.parquet'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> neighborhoodParquetSink"
+				"     skipDuplicateMapOutputs: true) ~> neighborhoodParquetSink"
 			]
 		}
 	}
