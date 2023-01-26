@@ -142,13 +142,13 @@
 				"FormatType": "parquet",
 				"SerializeLib": "org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe",
 				"Properties": {
-					"path": "abfss://vollgaz-synapse-azdl@vollgazsynapse.dfs.core.windows.net/clean/parking_luxembourg/parkings.parquet",
+					"path": "abfss://vollgaz-synapse-azdl@vollgazsynapse.dfs.core.windows.net/clean/parking_luxembourg/parkings",
 					"FormatTypeSetToDatabaseDefault": false
 				}
 			},
 			"Source": {
 				"Provider": "ADLS",
-				"Location": "abfss://vollgaz-synapse-azdl@vollgazsynapse.dfs.core.windows.net/clean/parking_luxembourg/parkings.parquet",
+				"Location": "abfss://vollgaz-synapse-azdl@vollgazsynapse.dfs.core.windows.net/clean/parking_luxembourg/parkings",
 				"Properties": {
 					"LinkedServiceName": "AzureDataLakeStorage1",
 					"LocationSetToDatabaseDefault": false
