@@ -1,0 +1,108 @@
+{
+	"name": "Dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "rawParkingData",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "parkingsParquet",
+						"type": "DatasetReference"
+					},
+					"name": "parkingsParquetSink"
+				},
+				{
+					"dataset": {
+						"referenceName": "neighborhoodParquet",
+						"type": "DatasetReference"
+					},
+					"name": "neighborhoodParquetSink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "flattenParkings"
+				},
+				{
+					"name": "flattenNeighborhoods"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          createdAt as string,",
+				"          neighborhood as (actuel as short, slug as string, tendance as boolean, tendance_average as double, title as string, total as short)[],",
+				"          parking as (actuel as short, complet as boolean, coords as (latitude as double, longitude as double), id as short, ouvert as boolean, tendance as boolean, title as string, total as short)[]",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     limit: 100,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> source1",
+				"source1 foldDown(unroll(parking),",
+				"     mapColumn(",
+				"          id = parking.id,",
+				"          title = parking.title,",
+				"          total = parking.total,",
+				"          actuel = parking.actuel,",
+				"          tendance = parking.tendance,",
+				"          ouvert = parking.ouvert,",
+				"          complet = parking.complet,",
+				"          coords = parking.coords,",
+				"          createdAt",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flattenParkings",
+				"source1 foldDown(unroll(neighborhood),",
+				"     mapColumn(",
+				"          actuel = neighborhood.actuel,",
+				"          slug = neighborhood.slug,",
+				"          tendance = neighborhood.tendance,",
+				"          tendance_average = neighborhood.tendance_average,",
+				"          title = neighborhood.title,",
+				"          total = neighborhood.total,",
+				"          createdAt",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flattenNeighborhoods",
+				"flattenParkings sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          id,",
+				"          title,",
+				"          total,",
+				"          actuel,",
+				"          tendance,",
+				"          ouvert,",
+				"          complet,",
+				"          coords_latitude = coords.latitude,",
+				"          coords_longitude = coords.longitude,",
+				"          createdAt",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> parkingsParquetSink",
+				"flattenNeighborhoods sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> neighborhoodParquetSink"
+			]
+		}
+	}
+}

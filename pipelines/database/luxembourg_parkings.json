@@ -16,7 +16,10 @@
 				"FormatType": "parquet",
 				"LinkedServiceName": "AzureDataLakeStorage1"
 			}
-		}
+		},
+		"PublishStatus": "PUBLISHED",
+		"ObjectVersion": 6,
+		"ObjectId": "a7830d96-311c-41f8-a69f-981699bf2db8"
 	},
 	"type": "DATABASE"
 }

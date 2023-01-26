@@ -3,139 +3,167 @@
 	"properties": {
 		"Name": "parkings",
 		"EntityType": "TABLE",
-		"Namespace": {
-			"DatabaseName": "luxembourg_parkings"
-		},
-		"Description": "",
 		"TableType": "EXTERNAL",
-		"Origin": {
-			"Type": "SPARK"
+		"Namespace": {
+			"SchemaName": null,
+			"DatabaseName": "luxembourg_parkings",
+			"DatabaseId": null
 		},
 		"StorageDescriptor": {
+			"Distribution": null,
 			"Columns": [
 				{
 					"Name": "id",
+					"Description": null,
 					"OriginDataTypeName": {
 						"TypeName": "short",
 						"IsComplexType": false,
 						"IsNullable": true,
+						"Length": 0,
+						"Precision": 0,
+						"Scale": 0,
 						"Properties": {
 							"HIVE_TYPE_STRING": "short"
 						}
-					},
-					"DeltaFormatInvalidMessages": []
+					}
 				},
 				{
 					"Name": "title",
+					"Description": null,
 					"OriginDataTypeName": {
 						"TypeName": "string",
 						"IsComplexType": false,
 						"IsNullable": true,
 						"Length": 8000,
+						"Precision": 0,
+						"Scale": 0,
 						"Properties": {
 							"HIVE_TYPE_STRING": "string"
 						}
-					},
-					"DeltaFormatInvalidMessages": []
+					}
 				},
 				{
 					"Name": "total",
+					"Description": null,
 					"OriginDataTypeName": {
 						"TypeName": "short",
 						"IsComplexType": false,
 						"IsNullable": true,
+						"Length": 0,
+						"Precision": 0,
+						"Scale": 0,
 						"Properties": {
 							"HIVE_TYPE_STRING": "short"
 						}
-					},
-					"DeltaFormatInvalidMessages": []
+					}
 				},
 				{
 					"Name": "actuel",
+					"Description": null,
 					"OriginDataTypeName": {
 						"TypeName": "short",
 						"IsComplexType": false,
 						"IsNullable": true,
+						"Length": 0,
+						"Precision": 0,
+						"Scale": 0,
 						"Properties": {
 							"HIVE_TYPE_STRING": "short"
 						}
-					},
-					"DeltaFormatInvalidMessages": []
+					}
 				},
 				{
 					"Name": "tendance",
+					"Description": null,
 					"OriginDataTypeName": {
 						"TypeName": "boolean",
 						"IsComplexType": false,
 						"IsNullable": true,
+						"Length": 0,
+						"Precision": 0,
+						"Scale": 0,
 						"Properties": {
 							"HIVE_TYPE_STRING": "boolean"
 						}
-					},
-					"DeltaFormatInvalidMessages": []
+					}
 				},
 				{
 					"Name": "ouvert",
+					"Description": null,
 					"OriginDataTypeName": {
 						"TypeName": "boolean",
 						"IsComplexType": false,
 						"IsNullable": true,
+						"Length": 0,
+						"Precision": 0,
+						"Scale": 0,
 						"Properties": {
 							"HIVE_TYPE_STRING": "boolean"
 						}
-					},
-					"DeltaFormatInvalidMessages": []
+					}
 				},
 				{
 					"Name": "complet",
+					"Description": null,
 					"OriginDataTypeName": {
 						"TypeName": "boolean",
 						"IsComplexType": false,
 						"IsNullable": true,
+						"Length": 0,
+						"Precision": 0,
+						"Scale": 0,
 						"Properties": {
 							"HIVE_TYPE_STRING": "boolean"
 						}
-					},
-					"DeltaFormatInvalidMessages": []
+					}
 				},
 				{
 					"Name": "coords_latitude",
+					"Description": null,
 					"OriginDataTypeName": {
 						"TypeName": "double",
 						"IsComplexType": false,
 						"IsNullable": true,
+						"Length": 0,
+						"Precision": 0,
+						"Scale": 0,
 						"Properties": {
 							"HIVE_TYPE_STRING": "double"
 						}
-					},
-					"DeltaFormatInvalidMessages": []
+					}
 				},
 				{
 					"Name": "coords_longitude",
+					"Description": null,
 					"OriginDataTypeName": {
 						"TypeName": "double",
 						"IsComplexType": false,
 						"IsNullable": true,
+						"Length": 0,
+						"Precision": 0,
+						"Scale": 0,
 						"Properties": {
 							"HIVE_TYPE_STRING": "double"
 						}
-					},
-					"DeltaFormatInvalidMessages": []
+					}
 				},
 				{
 					"Name": "createdAt",
+					"Description": null,
 					"OriginDataTypeName": {
 						"TypeName": "string",
 						"IsComplexType": false,
 						"IsNullable": true,
 						"Length": 8000,
+						"Precision": 0,
+						"Scale": 0,
 						"Properties": {
 							"HIVE_TYPE_STRING": "string"
 						}
-					},
-					"DeltaFormatInvalidMessages": []
+					}
 				}
 			],
+			"ColumnSetEntityName": "f11e73dd-f576-452f-b508-97340070024b",
 			"Format": {
 				"InputFormat": "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat",
 				"OutputFormat": "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat",
@@ -160,18 +188,34 @@
 				"derivedModelAttributeInfo": "{\"attributeReferences\":{}}"
 			},
 			"Compressed": false,
+			"SerDeInfo": null,
 			"IsStoredAsSubdirectories": false
 		},
+		"Owner": null,
+		"CreateTime": 0,
+		"LastAccessTime": 0,
+		"Retention": 0,
+		"Temporary": false,
+		"IsRewriteEnabled": false,
+		"ViewOriginalText": null,
+		"ViewExpandedText": null,
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"OriginObjectId": null,
+		"IsSharedEntity": false,
+		"PublishStatus": "PUBLISHED",
 		"Properties": {
 			"Description": "",
 			"DisplayFolderInfo": "{\"name\":\"Others\",\"colorCode\":\"\"}",
 			"PrimaryKeys": "",
 			"spark.sql.sources.provider": "parquet",
-			"sql:IsAppendOnly": false
+			"spark.sql.sources.schema.numParts": "1",
+			"spark.sql.sources.schema.part.0": "{\"type\":\"struct\",\"fields\":[{\"name\":\"id\",\"type\":\"short\",\"nullable\":true,\"metadata\":{}},{\"name\":\"title\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"total\",\"type\":\"short\",\"nullable\":true,\"metadata\":{}},{\"name\":\"actuel\",\"type\":\"short\",\"nullable\":true,\"metadata\":{}},{\"name\":\"tendance\",\"type\":\"boolean\",\"nullable\":true,\"metadata\":{}},{\"name\":\"ouvert\",\"type\":\"boolean\",\"nullable\":true,\"metadata\":{}},{\"name\":\"complet\",\"type\":\"boolean\",\"nullable\":true,\"metadata\":{}},{\"name\":\"coords_latitude\",\"type\":\"double\",\"nullable\":true,\"metadata\":{}},{\"name\":\"coords_longitude\",\"type\":\"double\",\"nullable\":true,\"metadata\":{}},{\"name\":\"createdAt\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}}]}"
 		},
-		"Retention": 0,
-		"Temporary": false,
-		"IsRewriteEnabled": false
+		"ObjectVersion": 6,
+		"ObjectId": "761ab74b-82c4-491a-b2be-dc7daea5673b",
+		"Description": ""
 	},
 	"type": "TABLE"
 }
