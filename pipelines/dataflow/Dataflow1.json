@@ -78,7 +78,7 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> parkingsParquetSink",
-				"flattenNeighborhoods sink(allowSchemaDrift: false,",
+				"flattenNeighborhoods sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
 				"     umask: 0022,",
