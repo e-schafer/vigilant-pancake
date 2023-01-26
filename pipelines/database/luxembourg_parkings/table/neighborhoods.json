@@ -107,13 +107,13 @@
 				"FormatType": "parquet",
 				"SerializeLib": "org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe",
 				"Properties": {
-					"path": "abfss://vollgaz-synapse-azdl@vollgazsynapse.dfs.core.windows.net//clean/parking_luxembourg/neighborhoods.parquet",
+					"path": "abfss://vollgaz-synapse-azdl@vollgazsynapse.dfs.core.windows.net/clean/parking_luxembourg/neighborhoods",
 					"FormatTypeSetToDatabaseDefault": false
 				}
 			},
 			"Source": {
 				"Provider": "ADLS",
-				"Location": "abfss://vollgaz-synapse-azdl@vollgazsynapse.dfs.core.windows.net//clean/parking_luxembourg/neighborhoods.parquet",
+				"Location": "abfss://vollgaz-synapse-azdl@vollgazsynapse.dfs.core.windows.net/clean/parking_luxembourg/neighborhoods",
 				"Properties": {
 					"LinkedServiceName": "AzureDataLakeStorage1",
 					"LocationSetToDatabaseDefault": false
@@ -121,7 +121,7 @@
 			},
 			"Properties": {
 				"textinputformat.record.delimiter": ",",
-				"compression": "",
+				"compression": "{\"type\":\"None\",\"level\":\"optimal\"}",
 				"derivedModelAttributeInfo": "{\"attributeReferences\":{}}"
 			},
 			"Compressed": false,
