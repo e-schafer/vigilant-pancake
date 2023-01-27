@@ -1,8 +1,8 @@
 {
-	"name": "SQL script 1",
+	"name": "Check_If_Its_Run",
 	"properties": {
 		"content": {
-			"query": "SELECT distinct createdAt\n FROM [luxembourg_parkings].[dbo].[parkings]",
+			"query": "SELECT MAX(createdAt)\n FROM [luxembourg_parkings].[dbo].[parkings]",
 			"metadata": {
 				"language": "sql"
 			},
