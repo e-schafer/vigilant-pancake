@@ -581,12 +581,12 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/SQL script 1')]",
+			"name": "[concat(parameters('workspaceName'), '/Check_If_Its_Run')]",
 			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "SELECT distinct createdAt\n FROM [luxembourg_parkings].[dbo].[parkings]",
+					"query": "SELECT MAX(createdAt)\n FROM [luxembourg_parkings].[dbo].[parkings]",
 					"metadata": {
 						"language": "sql"
 					},
@@ -1065,6 +1065,121 @@
 			},
 			"dependsOn": [],
 			"location": "westeurope"
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/ParkingsAnalytics')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "vollgazspark",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "197c2a18-dce5-4217-8da2-80e484a303f7"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/bff9c9b7-3548-4e32-9dd6-6e7b4385463d/resourceGroups/vollgaz-synapse-rg/providers/Microsoft.Synapse/workspaces/vollgaz-synapse-workspace/bigDataPools/vollgazspark",
+						"name": "vollgazspark",
+						"type": "Spark",
+						"endpoint": "https://vollgaz-synapse-workspace.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/vollgazspark",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "3.2",
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28,
+						"automaticScaleJobs": false
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "code",
+						"metadata": {},
+						"source": [
+							"import pyspark.sql.functions as f\r\n",
+							"df = spark.table('luxembourg_parkings.parkings')"
+						],
+						"outputs": [],
+						"execution_count": 6
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df.printSchema()"
+						],
+						"outputs": [],
+						"execution_count": 7
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"display(\r\n",
+							"    df\r\n",
+							"    .select(f.col('id'),f.col('title'),f.col('actuel'),f.col('createdAt'))\r\n",
+							"    .groupBy(f.col('id'),f.col('title'), f.window(\"createdAt\", \"1 hours\").alias('periode'))\r\n",
+							"    .agg(f.min('actuel').alias('minimal'), f.max('actuel').alias('maximal'))\r\n",
+							"    .select('*','periode.*')\r\n",
+							"    .drop('periode')\r\n",
+							"    .orderBy('id','start')\r\n",
+							")\r\n",
+							"\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 27
+					}
+				]
+			},
+			"dependsOn": []
 		}
 	]
 }
